@@ -7,12 +7,21 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    fileprivate var godMode: Bool = false
     fileprivate var upperSine: Sine?
     fileprivate var lowerSine: Sine?
+    fileprivate var scoreLabel: SKLabelNode?
     fileprivate var circle: Circle?
-    fileprivate var counter: Int = 0
+    fileprivate var counter: Double = 0
+    fileprivate var increment: Int = 1
+    fileprivate var began: Bool = false
+    fileprivate var ended: Bool = false
+    fileprivate var startTime: TimeInterval?
+    fileprivate var currentTime: TimeInterval?
+    fileprivate var touching: Bool = false
+    fileprivate var impulse: CGVector = CGVector(dx: 0, dy: 0.7)
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -28,20 +37,30 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
-//        let width: CGFloat = frame.width
-//        let height: CGFloat = frame.height
+        physicsWorld.contactDelegate = self
+        
+//        let width: CGFloat = view!.bounds.width
+//        let height: CGFloat = view!.bounds.height
+        
+        let width: CGFloat = size.width
+        let height: CGFloat = size.height
 
-        let width: CGFloat = view!.bounds.width
-        let height: CGFloat = view!.bounds.height
-        print("width: \(width), height: \(height)")
+        scoreLabel = SKLabelNode(fontNamed: "Avenir")
+        scoreLabel?.fontSize = 20
+        scoreLabel?.text = "0.00"
+        scoreLabel?.fontColor = .black
+        scoreLabel?.position = CGPoint(x: frame.midX, y: frame.midY + height / 3.0)
+        addChild(scoreLabel!)
         
         backgroundColor = .white
-        upperSine = Sine(width: 2 * width, height: 2 * height, color: .black, position: CGPoint(x: 0, y: height / 2.0))
+        upperSine = Sine(width: width, height: height, color: .black, position: CGPoint(x: frame.midX, y: frame.midY + height / 3.0))
+        lowerSine = Sine(width: width, height: height, color: .black, position: CGPoint(x: frame.midX, y: frame.midY - height / 3.0))
+        
         addChild(upperSine!)
-        lowerSine = Sine(width: 2 * width, height: 2 * height, color: .black, position: CGPoint(x: 0, y: -height / 2.0))
         addChild(lowerSine!)
         
-        circle = Circle(color: .black, position: CGPoint(x: -width / 4.0 , y: 0.0))
+        circle = Circle(color: .black, position: CGPoint(x: frame.midX / 3.0, y: frame.midY))
+        print("circle position: \(circle?.position)")
         addChild(circle!)
     }
     
@@ -56,10 +75,70 @@ class GameScene: SKScene {
     #endif
     
     override func update(_ currentTime: TimeInterval) {
-        upperSine!.update(counter)
-        lowerSine!.update(counter)
+        self.currentTime = currentTime
+        if began && !ended {
+            var yDec: CGFloat = 0.0
+            if upperSine!.position.y - lowerSine!.position.y > 5 * circle!.radius {
+                yDec = 0.05
+            }
+            upperSine!.update(counter)
+            lowerSine!.update(counter)
+            upperSine!.position.y -= yDec
+            lowerSine!.position.y += yDec
+            
+            if startTime == nil {
+                startTime = currentTime
+            }
+        }
         
-        counter += 1
+        if began && touching && !ended {
+            circle?.applyImpulse(impulse)
+        }
+        
+        updateCounter()
+    }
+    
+    func updateCounter() {
+        guard let t0 = startTime else {
+            return
+        }
+        
+        guard let t1 = currentTime else {
+            return
+        }
+        
+        let delta = t1 - t0
+        
+        if !ended {
+            scoreLabel?.text = String(format: "%.2f", delta)
+        }
+        
+        let x: Double = 60 * delta
+        counter = min(4500, pow(x, 1.1) + pow(cos(delta), 2))
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        if godMode {
+            return
+        }
+        ended = true
+        circle?.toggleGravity()
+        circle?.toggleDynamic()
+        let point = SKShapeNode(circleOfRadius: 5.0)
+        point.fillColor = .black
+        point.position = circle!.position
+        addChild(point)
+        
+        let scaleAction = SKAction.scale(to: 500, duration: 0.3)
+        scaleAction.timingMode = .easeInEaseOut
+        
+        let endAction = SKAction.run() { [weak self] in
+            guard let `self` = self else { return }
+            let gameOverScene = GameOverScene(size: self.size, time: self.currentTime! - self.startTime!)
+            gameOverScene.scaleMode = .aspectFill
+            self.view?.presentScene(gameOverScene)
+        }
+        point.run(SKAction.sequence([scaleAction, endAction]))
     }
 }
 
@@ -68,10 +147,12 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touching = true
         for t in touches {
-            let position = t.location(in: view)
-            let circle = Circle(color: .black, position: position)
-            self.addChild(circle)
+            if !began {
+                began = true
+                circle?.toggleGravity()
+            }
         }
     }
     
@@ -81,6 +162,7 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touching = false
         for t in touches {
         }
     }

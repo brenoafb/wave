@@ -11,35 +11,42 @@ import SpriteKit
 class Sine: SKShapeNode {
     
     
-    let amplitude: CGFloat = 100.0
-    let frequency: CGFloat = 1.0
+    let amplitude: CGFloat = 50.0
+    let frequency: CGFloat = 1
     let numPoints: Int = 48
     var centered = true
     
-    var width: CGFloat = 1050
-    var height: CGFloat = 350
+    var width: CGFloat
+    var height: CGFloat
     
     init(width: CGFloat, height: CGFloat, color: UIColor, position: CGPoint) {
         self.width = width
         self.height = height
         
         super.init()
-        lineWidth = 7
+        lineWidth = 3
         strokeColor = color
         self.position = position
 
         self.path = computePath(0)
+        physicsBody = SKPhysicsBody(edgeChainFrom: self.path!)
+        physicsBody?.affectedByGravity = false
+        physicsBody?.categoryBitMask = 0b0010
+        physicsBody?.contactTestBitMask = 0b0001
     }
     
     required init?(coder aDecoder: NSCoder) {
+        self.width = 0.0
+        self.height = 0.0
         super.init(coder: aDecoder)
     }
     
-    func update(_ offset: Int) {
+    func update(_ offset: Double) {
         self.path = computePath(offset)
+        physicsBody = SKPhysicsBody(edgeChainFrom: self.path!)
     }
     
-    func computePath(_ offset: Int) -> CGMutablePath {
+    func computePath(_ offset: Double) -> CGMutablePath {
         var offsetX: CGFloat = CGFloat(offset)
         var offsetY: CGFloat = amplitude
         
@@ -50,12 +57,13 @@ class Sine: SKShapeNode {
         
         let path = CGMutablePath()
         
-        path.move(to: CGPoint(x: offsetX, y: offsetY))
-        
         let xIncr: CGFloat = width / (CGFloat(numPoints) - 1)
         
         let factor: CGFloat = 2.0 * CGFloat.pi * frequency
         let denom: CGFloat = CGFloat(numPoints) - 1
+        
+        let y0: CGFloat = amplitude * sin(CGFloat(offset) / denom)
+        path.move(to: CGPoint(x: offsetX, y: y0 + offsetY))
         
         for i in 0..<numPoints {
             let x: CGFloat = CGFloat(i) * xIncr

@@ -9,7 +9,7 @@ import Foundation
 import SpriteKit
 
 class Circle: SKShapeNode {
-    let radius: CGFloat = 10
+    let radius: CGFloat = 25
 
     init(color: SKColor, position: CGPoint) {
         super.init()

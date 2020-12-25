@@ -21,7 +21,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     fileprivate var startTime: TimeInterval?
     fileprivate var currentTime: TimeInterval?
     fileprivate var touching: Bool = false
-    fileprivate var impulse: CGVector = CGVector(dx: 0, dy: 0.7)
+    fileprivate var impulse: CGVector = CGVector(dx: 0, dy: 5)
+    
+    var primaryColor: UIColor = uiColors["Orange"]!
+    var secondaryColor: UIColor = uiColors["White"]!
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -42,24 +45,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        let width: CGFloat = view!.bounds.width
 //        let height: CGFloat = view!.bounds.height
         
+        print(colors)
+        
         let width: CGFloat = size.width
         let height: CGFloat = size.height
 
         scoreLabel = SKLabelNode(fontNamed: "Avenir")
         scoreLabel?.fontSize = 20
         scoreLabel?.text = "0.00"
-        scoreLabel?.fontColor = .black
+        scoreLabel?.fontColor = primaryColor
         scoreLabel?.position = CGPoint(x: frame.midX, y: frame.midY + height / 3.0)
         addChild(scoreLabel!)
         
-        backgroundColor = .white
-        upperSine = Sine(width: width, height: height, color: .black, position: CGPoint(x: frame.midX, y: frame.midY + height / 3.0))
-        lowerSine = Sine(width: width, height: height, color: .black, position: CGPoint(x: frame.midX, y: frame.midY - height / 3.0))
+        backgroundColor = secondaryColor
+        upperSine = Sine(width: width, height: height, color: primaryColor, position: CGPoint(x: frame.midX, y: frame.midY + height / 3.0))
+        lowerSine = Sine(width: width, height: height, color: primaryColor, position: CGPoint(x: frame.midX, y: frame.midY - height / 3.0))
         
         addChild(upperSine!)
         addChild(lowerSine!)
         
-        circle = Circle(color: .black, position: CGPoint(x: frame.midX / 3.0, y: frame.midY))
+        circle = Circle(color: primaryColor, position: CGPoint(x: frame.midX / 3.0, y: frame.midY))
         print("circle position: \(circle?.position)")
         addChild(circle!)
     }
@@ -125,7 +130,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         circle?.toggleGravity()
         circle?.toggleDynamic()
         let point = SKShapeNode(circleOfRadius: 5.0)
-        point.fillColor = .black
+        point.fillColor = primaryColor
         point.position = circle!.position
         addChild(point)
         
@@ -134,7 +139,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let endAction = SKAction.run() { [weak self] in
             guard let `self` = self else { return }
-            let gameOverScene = GameOverScene(size: self.size, time: self.currentTime! - self.startTime!)
+            let gameOverScene = GameOverScene(size: self.size,
+                                              time: self.currentTime! - self.startTime!,
+                                              primaryColor: self.primaryColor,
+                                              secondaryColor: self.secondaryColor)
             gameOverScene.scaleMode = .aspectFill
             self.view?.presentScene(gameOverScene)
         }

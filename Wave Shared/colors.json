@@ -1,0 +1,14 @@
+{
+  "White": { "red": 1.0, "green": 1.0, "blue": 1.0 },
+  "Black": { "red": 0.0, "green": 0.0, "blue": 0.0 },
+  "Gray": { "red": 0.761, "green": 0.796, "blue": 0.807 } ,
+  "Red": { "red": 1.0, "green": 0.0, "blue": 0.0 } ,
+  "Orange": { "red": 1.0, "green": 0.447, "blue": 0.0 } ,
+  "Yellow": { "red": 1.0, "green": 0.820, "blue": 0.027 } ,
+  "Green": { "red": 0.43, "green": 0.722, "blue": 0.467 } ,
+  "Lime": { "red": 0.784, "green": 1.0, "blue": 0.0 } ,
+  "Cyan": { "red": 1.0, "green": 1.0, "blue": 0.0 } ,
+  "Blue": { "red": 0.196, "green": 0.486, "blue": 0.786 } ,
+  "Purple": { "red": 0.565, "green": 0.380, "blue": 0.753 },
+  "Pink": { "red": 0.925, "green": 0.035, "blue": 0.541 }
+}

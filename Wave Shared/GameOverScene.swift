@@ -10,16 +10,21 @@ import SpriteKit
 class GameOverScene: SKScene {
     
     private var touched: Bool = false
+    var primaryColor: UIColor = .black
+    var secondaryColor: UIColor = .white
     
-    init(size: CGSize, time: TimeInterval) {
+    init(size: CGSize, time: TimeInterval, primaryColor: UIColor, secondaryColor: UIColor) {
         super.init(size: size)
         
-        backgroundColor = .black
+        self.primaryColor = primaryColor
+        self.secondaryColor = secondaryColor
+        
+        backgroundColor = primaryColor
         
         let label = SKLabelNode(fontNamed: "Avenir")
         label.text = String(format: "%.2f", time)
         label.fontSize = 50
-        label.fontColor = .white
+        label.fontColor = secondaryColor
         label.position = CGPoint(x: size.width / 2.0, y: size.height / 2.0)
         addChild(label)
     }
@@ -47,6 +52,8 @@ class GameOverScene: SKScene {
                 guard let `self` = self else { return }
                 let transition = SKTransition.doorsCloseHorizontal(withDuration: 0.5)
                 let gameScene = GameScene(size: self.size)
+                gameScene.primaryColor = self.primaryColor
+                gameScene.secondaryColor = self.secondaryColor
                 gameScene.scaleMode = .aspectFill
                 self.view?.presentScene(gameScene, transition: transition)
             }

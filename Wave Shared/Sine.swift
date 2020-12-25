@@ -24,7 +24,7 @@ class Sine: SKShapeNode {
         self.height = height
         
         super.init()
-        lineWidth = 3
+        lineWidth = 5
         strokeColor = color
         self.position = position
 

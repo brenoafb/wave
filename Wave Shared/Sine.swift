@@ -69,7 +69,6 @@ class Sine: SKShapeNode {
             let x: CGFloat = CGFloat(i) * xIncr
             let y: CGFloat = amplitude * sin((factor * CGFloat(i) + CGFloat(offset)) / denom)
             path.addLine(to: CGPoint(x: x + offsetX, y: y + offsetY))
-            // print("sine: x: \(x), y: \(y)")
         }
         
         return path

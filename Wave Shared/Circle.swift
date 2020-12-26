@@ -14,13 +14,6 @@ class Circle: SKShapeNode {
     init(color: SKColor, position: CGPoint) {
         super.init()
         
-//        let rect = CGRect(x: 0, y: 0, width: 2 * radius, height: 2 * radius)
-//
-//        self.path = CGPath(ellipseIn: rect, transform: nil)
-//        self.fillColor = color
-//        self.strokeColor = color
-//        self.position = position
-        
         let path = CGMutablePath()
         path.addArc(center: CGPoint(x: 0, y: 0), radius: radius, startAngle: 0, endAngle: CGFloat.pi * 2.0, clockwise: true)
         self.path = path

@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import AudioToolbox
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -23,8 +24,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     fileprivate var touching: Bool = false
     fileprivate var impulse: CGVector = CGVector(dx: 0, dy: 5)
     
-    var primaryColor: UIColor = uiColors["Orange"]!
-    var secondaryColor: UIColor = uiColors["White"]!
+    var primaryColor: UIColor = uiColors["White"]!
+    var secondaryColor: UIColor = uiColors["Black"]!
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -41,11 +42,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func setUpScene() {
         physicsWorld.contactDelegate = self
-        
-//        let width: CGFloat = view!.bounds.width
-//        let height: CGFloat = view!.bounds.height
-        
-        print(colors)
         
         let width: CGFloat = size.width
         let height: CGFloat = size.height
@@ -65,7 +61,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(lowerSine!)
         
         circle = Circle(color: primaryColor, position: CGPoint(x: frame.midX / 3.0, y: frame.midY))
-        print("circle position: \(circle?.position)")
         addChild(circle!)
     }
     
@@ -82,10 +77,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         self.currentTime = currentTime
         if began && !ended {
-            var yDec: CGFloat = 0.0
-            if upperSine!.position.y - lowerSine!.position.y > 5 * circle!.radius {
-                yDec = 0.05
-            }
+            let yDec: CGFloat = 0.1 * sin(CGFloat(counter) / (240 * CGFloat.pi))
+//            if upperSine!.position.y - lowerSine!.position.y > 5 * circle!.radius {
+//                yDec = 0.05
+//            }
             upperSine!.update(counter)
             lowerSine!.update(counter)
             upperSine!.position.y -= yDec
@@ -119,7 +114,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         let x: Double = 60 * delta
-        counter = min(4500, pow(x, 1.1) + pow(cos(delta), 2))
+        counter = pow(x, 1.15) + pow(5 * sin(delta), 2)
+        print(counter)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -136,6 +132,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let scaleAction = SKAction.scale(to: 500, duration: 0.3)
         scaleAction.timingMode = .easeInEaseOut
+            
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
         
         let endAction = SKAction.run() { [weak self] in
             guard let `self` = self else { return }
@@ -146,6 +145,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             gameOverScene.scaleMode = .aspectFill
             self.view?.presentScene(gameOverScene)
         }
+
         point.run(SKAction.sequence([scaleAction, endAction]))
     }
 }
@@ -156,6 +156,8 @@ extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         touching = true
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
         for t in touches {
             if !began {
                 began = true

@@ -11,6 +11,7 @@ import AudioToolbox
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     fileprivate var godMode: Bool = false
+    fileprivate var easyMode: Bool = false
     fileprivate var upperSine: Sine?
     fileprivate var lowerSine: Sine?
     fileprivate var scoreLabel: SKLabelNode?
@@ -41,21 +42,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setUpScene() {
-        physicsWorld.contactDelegate = self
         
-        let width: CGFloat = size.width
-        let height: CGFloat = size.height
+        let random = Double.random(in: 0..<1)
+        if random <= 0.2 {
+            easyMode = true
+            print("easy mode")
+        }
+        
+        let defaults = UserDefaults.standard
+        
+        if !defaults.bool(forKey: "Not First Launch") {
+            print("first launch")
+            defaults.set(true, forKey: "Not First Launch")
+            easyMode = true
+        }
+        
+        physicsWorld.contactDelegate = self
 
         scoreLabel = SKLabelNode(fontNamed: "Avenir")
-        scoreLabel?.fontSize = 20
+        scoreLabel?.fontSize = 30
         scoreLabel?.text = "0.00"
         scoreLabel?.fontColor = primaryColor
-        scoreLabel?.position = CGPoint(x: frame.midX, y: frame.midY + height / 3.0)
+        scoreLabel?.position = CGPoint(x: frame.midX, y: frame.midY + size.height / 3.0)
         addChild(scoreLabel!)
         
         backgroundColor = secondaryColor
-        upperSine = Sine(width: width, height: height, color: primaryColor, position: CGPoint(x: frame.midX, y: frame.midY + height / 3.0))
-        lowerSine = Sine(width: width, height: height, color: primaryColor, position: CGPoint(x: frame.midX, y: frame.midY - height / 3.0))
+        upperSine = Sine(width: size.width, height: size.height, color: primaryColor, position: CGPoint(x: frame.midX, y: frame.midY + size.height / 3.0))
+        lowerSine = Sine(width: size.width, height: size.height, color: primaryColor, position: CGPoint(x: frame.midX, y: frame.midY - size.height / 3.0))
         
         addChild(upperSine!)
         addChild(lowerSine!)
@@ -77,10 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         self.currentTime = currentTime
         if began && !ended {
-            let yDec: CGFloat = 0.1 * sin(CGFloat(counter) / (240 * CGFloat.pi))
-//            if upperSine!.position.y - lowerSine!.position.y > 5 * circle!.radius {
-//                yDec = 0.05
-//            }
+            let yDec: CGFloat = easyMode ? 0.05 * sin(CGFloat(counter) / (240 * CGFloat.pi)) : 0.1 * sin(CGFloat(counter) / (240 * CGFloat.pi))
             upperSine!.update(counter)
             lowerSine!.update(counter)
             upperSine!.position.y -= yDec
@@ -114,8 +124,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         let x: Double = 60 * delta
-        counter = pow(x, 1.15) + pow(5 * sin(delta), 2)
-        print(counter)
+        // counter = easyMode ? pow(x, 1.10) + pow(5 * sin(delta), 2) : pow(x, 1.15) + pow(5 * sin(delta), 2)
+        counter = easyMode ? pow(x, 1.10) : pow(x, 1.15)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {

@@ -8,10 +8,23 @@
 import Foundation
 import SpriteKit
 
+var colorData: ColorData = load("colors.json")
+
+struct ColorData: Decodable {
+  let colors: [String : Color]
+  let pairs: [[String]]
+  var uiColors: [String : UIColor] {
+    colors.mapValues(toUIColor)
+  }
+  var skColors: [String : SKColor] {
+    colors.mapValues(toUIColor)
+  }
+}
+
 struct Color: Decodable {
-    var red: Double
-    var green: Double
-    var blue: Double
+    let red: Double
+    let green: Double
+    let blue: Double
 }
 
 func toSKColor(_ color: Color) -> SKColor {
@@ -21,10 +34,6 @@ func toSKColor(_ color: Color) -> SKColor {
 func toUIColor(_ color: Color) -> UIColor {
     return UIColor(red: CGFloat(color.red), green: CGFloat(color.green), blue: CGFloat(color.blue), alpha: 1.0)
 }
-
-var colors: [String:Color] = load("colors.json")
-var skColors: [String:SKColor] = colors.mapValues { toSKColor($0) }
-var uiColors: [String:UIColor] = colors.mapValues { toUIColor($0) }
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data

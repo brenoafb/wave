@@ -19,7 +19,7 @@ class Sine: SKShapeNode {
     var width: CGFloat
     var height: CGFloat
     
-    init(width: CGFloat, height: CGFloat, color: UIColor, position: CGPoint) {
+    init(width: CGFloat, height: CGFloat, color: Color, position: CGPoint) {
         self.width = width
         self.height = height
         
@@ -62,12 +62,12 @@ class Sine: SKShapeNode {
         let factor: CGFloat = 2.0 * CGFloat.pi * frequency
         let denom: CGFloat = CGFloat(numPoints) - 1
         
-        let y0: CGFloat = amplitude * sin(CGFloat(offset) / denom)
+        let y0: CGFloat = amplitude * cos(CGFloat(offset) / denom)
         path.move(to: CGPoint(x: offsetX, y: y0 + offsetY))
         
         for i in 0..<numPoints {
             let x: CGFloat = CGFloat(i) * xIncr
-            let y: CGFloat = amplitude * sin((factor * CGFloat(i) + CGFloat(offset)) / denom)
+            let y: CGFloat = amplitude * cos((factor * CGFloat(i) + CGFloat(offset)) / denom)
             path.addLine(to: CGPoint(x: x + offsetX, y: y + offsetY))
         }
         

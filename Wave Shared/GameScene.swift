@@ -26,8 +26,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   fileprivate var impulse: CGVector = CGVector(dx: 0, dy: 5)
   fileprivate var defaults: UserDefaults = UserDefaults.standard
   
-  var primaryColor: UIColor = .white
-  var secondaryColor: UIColor = .black
+  var primaryColor: Color = .white
+  var secondaryColor: Color = .black
   
   class func newGameScene() -> GameScene {
     // Load 'GameScene.sks' as an SKScene.
@@ -54,8 +54,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let primaryColor = shuffledPairs.first![0]
     let secondaryColor = shuffledPairs.first![1]
     
-    self.primaryColor = colorData.uiColors[primaryColor]!
-    self.secondaryColor = colorData.uiColors[secondaryColor]!
+    self.primaryColor = colorData.colors[primaryColor]!
+    self.secondaryColor = colorData.colors[secondaryColor]!
     
     defaults.set(primaryColor, forKey: "Primary Color")
     defaults.set(secondaryColor, forKey: "Secondary Color")
@@ -76,7 +76,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     if let primaryColor = defaults.string(forKey: "Primary Color"),
-       let color = colorData.uiColors[primaryColor]
+       let color = colorData.colors[primaryColor]
     {
       self.primaryColor = color
     } else {
@@ -85,9 +85,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     if let secondaryColor = defaults.string(forKey: "Secondary Color"),
-       let color = colorData.uiColors[secondaryColor]
+       let color = colorData.colors[secondaryColor]
     {
-        self.secondaryColor = color
+      self.secondaryColor = color
     } else {
       self.secondaryColor = .black
       defaults.set("Black", forKey: "Secondary Color")
@@ -236,11 +236,9 @@ extension GameScene {
   
   override func mouseDown(with event: NSEvent) {
     touching = true
-    for _ in touches {
-      if !began {
-        began = true
-        circle?.toggleGravity()
-      }
+    if !began {
+      began = true
+      circle?.toggleGravity()
     }
   }
   

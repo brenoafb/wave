@@ -33,6 +33,7 @@
 		555E79D42595757400481FE6 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555E797D2595757100481FE6 /* GameScene.swift */; };
 		555E79D52595757400481FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 555E797E2595757400481FE6 /* Assets.xcassets */; };
 		555E79D82595757400481FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 555E797E2595757400481FE6 /* Assets.xcassets */; };
+		557FE2A125A25265006BD1C6 /* colors.json in Resources */ = {isa = PBXBuildFile; fileRef = 554BD7832599A8E1006E8D76 /* colors.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -244,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				555E79C72595757400481FE6 /* Main.storyboard in Resources */,
+				557FE2A125A25265006BD1C6 /* colors.json in Resources */,
 				555E79D02595757400481FE6 /* GameScene.sks in Resources */,
 				555E79D82595757400481FE6 /* Assets.xcassets in Resources */,
 				555E79CC2595757400481FE6 /* Actions.sks in Resources */,

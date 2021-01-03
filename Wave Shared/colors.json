@@ -1,4 +1,4 @@
-{ "colors":
+{ "jsonColors":
   {
     "White": { "red": 1.0, "green": 1.0, "blue": 1.0 },
     "Black": { "red": 0.0, "green": 0.0, "blue": 0.0 },
@@ -29,8 +29,11 @@
     ["Orange", "Black"],
     ["Green", "Black"],
     ["Blue", "Black"],
+    ["Cyan", "Black"],
     ["Blue", "Black"],
     ["Pink", "Black"],
+    ["Purple", "Black"],
+    ["Lime", "Black"],
     ["Lime", "Purple"]
   ]
 }
